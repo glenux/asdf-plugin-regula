@@ -44,8 +44,15 @@ download_release() {
   # TODO: Adapt the release URL convention for regula
   url="$GH_REPO/archive/v${version}.tar.gz"
 
-  echo "* Downloading $TOOL_NAME release $version..."
+  echo "* Downloading $TOOL_NAME release $version... (to $filename)"
   curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+
+  echo "* Building $TOOL_NAME release $version..."
+  CUR="$(pwd)"
+  cd "$ASDF_DOWNLOAD_PATH"
+  make binary
+  cd "$CUR"
+  echo "  Build successful!"
 }
 
 install_version() {
@@ -58,6 +65,7 @@ install_version() {
   fi
 
   (
+
     mkdir -p "$install_path"
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
